@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年税务申报工作日历</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+        }
+        
+        .calendar-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .calendar-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .calendar-controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .calendar-controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .weekday {
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+        }
+        
+        .calendar-day {
+            min-height: 150px;
+            background: white;
+            padding: 12px;
+            position: relative;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .calendar-day:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* 申报期特殊样式 */
+        .tax-deadline {
+            background-color: #fff8e1 !important;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .tax-deadline .day-number {
+            color: #e65100;
+            font-weight: 700;
+        }
+        
+        /* 申报截止日特殊样式 */
+        .tax-deadline-final {
+            background-color: #ffebee !important;
+            border-left: 4px solid #f44336;
+        }
+        
+        .tax-deadline-final .day-number {
+            color: #d32f2f;
+            font-weight: 800;
+        }
+        
+        /* 非征期样式 */
+        .non-tax-period {
+            background-color: #f9f9f9 !important;
+        }
+        
+        .other-month {
+            background-color: #f5f5f5;
+            color: #aaa;
+        }
+        
+        .other-month .day-header {
+            color: #aaa;
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .day-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .today .day-number {
+            color: #e74c3c;
+        }
+        
+        .today .day-number span {
+            background: #e74c3c;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .day-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .day-actions button {
+            background: #ecf0f1;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            transition: all 0.2s;
+        }
+        
+        .day-actions button:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .day-content {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 100px;
+        }
+        
+        .day-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .day-content::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 4px;
+        }
+        
+        .tax-deadline-label {
+            display: inline-block;
+            background-color: #ff9800;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .tax-deadline-final-label {
+            display: inline-block;
+            background-color: #f44336;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .task-section {
+            margin-bottom: 8px;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .task-item, .duty-item {
+            background: #f8f9fa;
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid #3498db;
+            word-break: break-word;
+        }
+        
+        .task-item:hover, .duty-item:hover {
+            background: #edf2f7;
+        }
+        
+        .task-high {
+            border-left-color: #e74c3c;
+        }
+        
+        .task-medium {
+            border-left-color: #f39c12;
+        }
+        
+        .task-low {
+            border-left-color: #2ecc71;
+        }
+        
+        .duty-item {
+            border-left-color: #9b59b6;
+        }
+        
+        .empty-message {
+            color: #bdc3c7;
+            font-size: 11px;
+            font-style: italic;
+            text-align: center;
+            padding: 5px 0;
+        }
+        
+        /* 数据控制按钮调整到顶部 */
+        .data-controls-top {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .data-controls-top button {
+            background: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .data-controls-top button:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 20px;
+        }
+        
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+        }
+        
+        /* 申报期说明样式 */
+        .tax-info {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .tax-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .tax-info ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .tax-info li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .tax-info li:before {
+            content: "•";
+            color: #3498db;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+        
+        @media (max-width: 1024px) {
+            .calendar-day {
+                min-height: 140px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .calendar-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .calendar-day {
+                min-height: 130px;
+                padding: 8px;
+            }
+            
+            .day-number {
+                font-size: 16px;
+            }
+            
+            .task-item, .duty-item {
+                font-size: 11px;
+                padding: 3px 5px;
+            }
+            
+            .data-controls-top {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .weekday {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+            
+            .calendar-day {
+                min-height: 120px;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>2026年税务申报工作日历</h1>
+            <p>结合《国务院办公厅关于2026年部分节假日安排的通知》（国办发明电〔2025〕7号）要求制定</p>
+            
+            <!-- 将导出和清空按钮移到顶部 -->
+            <div class="data-controls-top">
+                <button id="export-data">📥 导出数据</button>
+                <button id="clear-data">🗑️ 清空数据</button>
+            </div>
+        </div>
+        
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h2 id="current-month">2026年1月</h2>
+                <div class="calendar-controls">
+                    <button id="prev-month">←</button>
+                    <button id="today-btn">今天</button>
+                    <button id="next-month">→</button>
+                </div>
+            </div>
+            
+            <div class="calendar-weekdays">
+                <div class="weekday">周一</div>
+                <div class="weekday">周二</div>
+                <div class="weekday">周三</div>
+                <div class="weekday">周四</div>
+                <div class="weekday">周五</div>
+                <div class="weekday">周六</div>
+                <div class="weekday">周日</div>
+            </div>
+            
+            <div class="calendar-days" id="calendar-days">
+                <!-- 日历天数将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 申报期说明 -->
+        <div class="tax-info">
+            <h3>📅 2026年申报纳税期限说明</h3>
+            <ul>
+                <li><strong>1月申报期：</strong>1月1日至20日（1-3日放假，申报期顺延至20日）</li>
+                <li><strong>2月申报期：</strong>2月1日至24日（15-23日放假，申报期顺延至24日）</li>
+                <li><strong>3月申报期：</strong>3月1日至16日（15日为周日，申报期顺延至16日）</li>
+                <li><strong>4月申报期：</strong>4月1日至20日（4-6日放假，申报期顺延至20日）</li>
+                <li><strong>5月申报期：</strong>5月1日至22日（1-5日放假，申报期顺延至22日）</li>
+                <li><strong>6月申报期：</strong>6月1日至15日</li>
+                <li><strong>7月申报期：</strong>7月1日至15日</li>
+                <li><strong>8月申报期：</strong>8月1日至17日（15日为周六，申报期顺延至17日）</li>
+                <li><strong>9月申报期：</strong>9月1日至15日</li>
+                <li><strong>10月申报期：</strong>10月1日至26日（1-7日放假，申报期顺延至26日）</li>
+                <li><strong>11月申报期：</strong>11月1日至16日（15日为周日，申报期顺延至16日）</li>
+                <li><strong>12月申报期：</strong>12月1日至15日</li>
+            </ul>
+            <p style="margin-top: 10px; color: #e74c3c; font-size: 14px; font-weight: 600;">
+                注：橙色背景为申报期，红色背景为申报截止日，请务必在申报期内完成申报工作。
+            </p>
+        </div>
+        
+        <!-- 编辑模态框 -->
+        <div class="edit-modal" id="edit-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-date">编辑日期内容</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="task-content">重点事项</label>
+                        <textarea id="task-content" placeholder="请输入当天的重点事项..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">事项优先级</label>
+                        <select id="task-priority">
+                            <option value="high">高优先级</option>
+                            <option value="medium" selected>中优先级</option>
+                            <option value="low">低优先级</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duty-person">值班人员</label>
+                        <input type="text" id="duty-person" placeholder="请输入值班人员姓名">
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">备注信息</label>
+                        <textarea id="notes" placeholder="请输入其他备注信息..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" id="cancel-edit">取消</button>
+                    <button class="btn-primary" id="save-edit">保存</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 通知 -->
+        <div class="notification" id="notification">数据已保存！</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentDate = new Date();
+            let currentMonth = 0; // 默认为1月
+            let currentYear = 2026; // 固定为2026年
+            let selectedDate = null;
+            
+            const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月",
+                               "7月", "8月", "9月", "10月", "11月", "12月"];
+            
+            // 2026年申报纳税期限（根据通知规定）
+            const taxDeadlines = {
+                1: 20,  // 1月20日
+                2: 24,  // 2月24日
+                3: 16,  // 3月16日
+                4: 20,  // 4月20日
+                5: 22,  // 5月22日
+                6: 15,  // 6月15日
+                7: 15,  // 7月15日
+                8: 17,  // 8月17日
+                9: 15,  // 9月15日
+                10: 26, // 10月26日
+                11: 16, // 11月16日
+                12: 15  // 12月15日
+            };
+            
+            // 判断是否为申报期（从每月1日到申报截止日）
+            function isTaxPeriod(month, day) {
+                const deadlineDay = taxDeadlines[month];
+                if (!deadlineDay) return false;
+                
+                // 申报期为每月1日到申报截止日
+                return day <= deadlineDay;
+            }
+            
+            // 判断是否为申报截止日
+            function isTaxDeadlineDay(month, day) {
+                const deadlineDay = taxDeadlines[month];
+                if (!deadlineDay) return false;
+                
+                return day === deadlineDay;
+            }
+            
+            // 从本地存储加载数据或使用示例数据
+            let calendarData = loadCalendarData();
+            
+            // 获取DOM元素
+            const calendarDays = document.getElementById('calendar-days');
+            const currentMonthElem = document.getElementById('current-month');
+            const editModal = document.getElementById('edit-modal');
+            const modalDate = document.getElementById('modal-date');
+            const taskContent = document.getElementById('task-content');
+            const taskPriority = document.getElementById('task-priority');
+            const dutyPerson = document.getElementById('duty-person');
+            const notes = document.getElementById('notes');
+            const cancelEdit = document.getElementById('cancel-edit');
+            const saveEdit = document.getElementById('save-edit');
+            const notification = document.getElementById('notification');
+            
+            // 初始化日历
+            function renderCalendar(month, year) {
+                // 更新当前月份显示
+                currentMonthElem.textContent = `${year}年${monthNames[month]}`;
+                
+                // 清空日历
+                calendarDays.innerHTML = '';
+                
+                // 获取当月第一天和最后一天
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                
+                // 获取当月天数
+                const daysInMonth = lastDay.getDate();
+                
+                // 获取当月第一天是星期几（0-6，0是周日）
+                let firstDayIndex = firstDay.getDay();
+                // 调整索引，使周一为0
+                firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+                
+                // 添加上个月的最后几天
+                const prevMonthLastDay = new Date(year, month, 0).getDate();
+                for (let i = firstDayIndex - 1; i >= 0; i--) {
+                    const day = createDayElement(year, month - 1, prevMonthLastDay - i, true);
+                    calendarDays.appendChild(day);
+                }
+                
+                // 添加当月的天数
+                const today = new Date();
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const day = createDayElement(year, month, i, false);
+                    
+                    // 判断是否是今天
+                    const isToday = i === today.getDate() && 
+                                   month === today.getMonth() && 
+                                   year === today.getFullYear();
+                    
+                    if (isToday) {
+                        day.classList.add('today');
+                    }
+                    
+                    calendarDays.appendChild(day);
+                }
+                
+                // 添加下个月的前几天，使日历完整
+                const totalCells = 42; // 6行x7天
+                const remainingCells = totalCells - (firstDayIndex + daysInMonth);
+                for (let i = 1; i <= remainingCells; i++) {
+                    const day = createDayElement(year, month + 1, i, true);
+                    calendarDays.appendChild(day);
+                }
+            }
+            
+            // 创建日期元素
+            function createDayElement(year, month, day, isOtherMonth) {
+                const dayElement = document.createElement('div');
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayData = calendarData[dateStr] || {};
+                
+                // 检查是否为申报期和申报截止日
+                const isTaxPeriodDay = isTaxPeriod(month + 1, day) && !isOtherMonth;
+                const isDeadlineDay = isTaxDeadlineDay(month + 1, day) && !isOtherMonth;
+                
+                // 格式化日期显示
+                const dateObj = new Date(year, month, day);
+                const dayOfWeek = dateObj.getDay();
+                const weekdayNames = ["日", "一", "二", "三", "四", "五", "六"];
+                
+                // 构建日期内容
+                let contentHTML = '';
+                
+                // 如果是申报截止日，添加红色标签
+                if (isDeadlineDay) {
+                    contentHTML += '<div class="tax-deadline-final-label">申报截止日</div>';
+                }
+                // 如果是申报期（非截止日），添加橙色标签
+                else if (isTaxPeriodDay) {
+                    contentHTML += '<div class="tax-deadline-label">申报期</div>';
+                }
+                
+                // 重点事项
+                if (dayData.tasks && dayData.tasks.length > 0) {
+                    contentHTML += '<div class="task-section">';
+                    contentHTML += '<div class="section-title">📋 重点事项</div>';
+                    dayData.tasks.forEach(task => {
+                        contentHTML += `<div class="task-item task-${task.priority}">${task.text}</div>`;
+                    });
+                    contentHTML += '</div>';
+                } else if (!isOtherMonth) {
+                    contentHTML += '<div class="task-section">';
+                    contentHTML += '<div class="section-title">📋 重点事项</div>';
+                    contentHTML += '<div class="empty-message">点击添加重点事项</div>';
+                    contentHTML += '</div>';
+                }
+                
+                // 值班人员
+                if (dayData.dutyPerson) {
+                    contentHTML += '<div class="task-section">';
+                    contentHTML += '<div class="section-title">👤 值班人员</div>';
+                    contentHTML += `<div class="duty-item">${dayData.dutyPerson}</div>`;
+                    contentHTML += '</div>';
+                } else if (!isOtherMonth) {
+                    contentHTML += '<div class="task-section">';
+                    contentHTML += '<div class="section-title">👤 值班人员</div>';
+                    contentHTML += '<div class="empty-message">点击添加值班人员</div>';
+                    contentHTML += '</div>';
+                }
+                
+                // 备注
+                if (dayData.notes) {
+                    contentHTML += '<div class="task-section">';
+                    contentHTML += '<div class="section-title">📝 备注</div>';
+                    contentHTML += `<div class="task-item task-low">${dayData.notes}</div>`;
+                    contentHTML += '</div>';
+                }
+                
+                // 设置CSS类
+                let dayClasses = ['calendar-day'];
+                if (isOtherMonth) {
+                    dayClasses.push('other-month');
+                } else if (isDeadlineDay) {
+                    dayClasses.push('tax-deadline-final');
+                } else if (isTaxPeriodDay) {
+                    dayClasses.push('tax-deadline');
+                } else {
+                    dayClasses.push('non-tax-period');
+                }
+                
+                dayElement.className = dayClasses.join(' ');
+                dayElement.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-number">
+                            ${day} (${weekdayNames[dayOfWeek]})
+                        </div>
+                        <div class="day-actions">
+                            <button class="edit-day" title="编辑">
+                                ✏️
+                            </button>
+                        </div>
+                    </div>
+                    <div class="day-content">
+                        ${contentHTML}
+                    </div>
+                `;
+                
+                // 如果不是其他月份的日期，添加点击事件
+                if (!isOtherMonth) {
+                    const editBtn = dayElement.querySelector('.edit-day');
+                    editBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openEditModal(dateStr, year, month, day);
+                    });
+                    
+                    // 点击整个日期格子也可以编辑
+                    dayElement.addEventListener('click', function() {
+                        openEditModal(dateStr, year, month, day);
+                    });
+                }
+                
+                return dayElement;
+            }
+            
+            // 打开编辑模态框
+            function openEditModal(dateStr, year, month, day) {
+                selectedDate = dateStr;
+                
+                // 设置模态框标题
+                const weekdayNames = ["日", "一", "二", "三", "四", "五", "六"];
+                const dateObj = new Date(year, month, day);
+                const dayOfWeek = dateObj.getDay();
+                modalDate.textContent = `${year}年${month+1}月${day}日 星期${weekdayNames[dayOfWeek]}`;
+                
+                // 填充现有数据
+                const dayData = calendarData[dateStr] || {};
+                taskContent.value = dayData.tasks ? dayData.tasks.map(t => t.text).join('\n') : '';
+                taskPriority.value = dayData.tasks && dayData.tasks.length > 0 ? dayData.tasks[0].priority : 'medium';
+                dutyPerson.value = dayData.dutyPerson || '';
+                notes.value = dayData.notes || '';
+                
+                // 显示模态框
+                editModal.style.display = 'flex';
+            }
+            
+            // 保存编辑
+            function saveDayData() {
+                if (!selectedDate) return;
+                
+                const tasks = taskContent.value.split('\n')
+                    .filter(text => text.trim() !== '')
+                    .map(text => ({
+                        text: text.trim(),
+                        priority: taskPriority.value
+                    }));
+                
+                calendarData[selectedDate] = {
+                    tasks: tasks,
+                    dutyPerson: dutyPerson.value.trim(),
+                    notes: notes.value.trim()
+                };
+                
+                // 如果没有数据，删除该日期的条目
+                if (tasks.length === 0 && !dutyPerson.value.trim() && !notes.value.trim()) {
+                    delete calendarData[selectedDate];
+                }
+                
+                // 保存到本地存储
+                saveCalendarData();
+                
+                // 重新渲染日历
+                renderCalendar(currentMonth, currentYear);
+                
+                // 关闭模态框
+                editModal.style.display = 'none';
+                
+                // 显示通知
+                showNotification('日期内容已保存！');
+            }
+            
+            // 显示通知
+            function showNotification(message) {
+                notification.textContent = message;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+            
+            // 保存数据到本地存储
+            function saveCalendarData() {
+                localStorage.setItem('workCalendarData', JSON.stringify(calendarData));
+            }
+            
+            // 从本地存储加载数据
+            function loadCalendarData() {
+                const savedData = localStorage.getItem('workCalendarData');
+                if (savedData) {
+                    return JSON.parse(savedData);
+                } else {
+                    // 返回示例数据
+                    return {
+                        '2026-01-20': {
+                            tasks: [
+                                { text: '1月税务申报截止日', priority: 'high' }
+                            ],
+                            dutyPerson: '张三',
+                            notes: '请注意在申报截止前完成所有税种申报'
+                        },
+                        '2026-02-24': {
+                            tasks: [
+                                { text: '2月税务申报截止日', priority: 'high' }
+                            ],
+                            dutyPerson: '李四',
+                            notes: '申报期因春节假期顺延'
+                        }
+                    };
+                }
+            }
+            
+            // 导出数据
+            function exportData() {
+                const dataStr = JSON.stringify(calendarData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `2026年税务工作日历数据_${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showNotification('数据已导出为JSON文件！');
+            }
+            
+            // 清空数据
+            function clearData() {
+                if (confirm('确定要清空所有日历数据吗？此操作不可撤销。')) {
+                    calendarData = {};
+                    localStorage.removeItem('workCalendarData');
+                    renderCalendar(currentMonth, currentYear);
+                    showNotification('所有数据已清空！');
+                }
+            }
+            
+            // 事件监听器
+            document.getElementById('prev-month').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+            
+            document.getElementById('next-month').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+            
+            document.getElementById('today-btn').addEventListener('click', function() {
+                currentDate = new Date();
+                currentMonth = currentDate.getMonth();
+                currentYear = currentDate.getFullYear();
+                renderCalendar(currentMonth, currentYear);
+            });
+            
+            cancelEdit.addEventListener('click', function() {
+                editModal.style.display = 'none';
+            });
+            
+            saveEdit.addEventListener('click', saveDayData);
+            
+            document.getElementById('export-data').addEventListener('click', exportData);
+            document.getElementById('clear-data').addEventListener('click', clearData);
+            
+            // 点击模态框外部关闭
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    editModal.style.display = 'none';
+                }
+            });
+            
+            // 初始渲染日历
+            renderCalendar(currentMonth, currentYear);
+        });
+    </script>
+</body>
+</html>
