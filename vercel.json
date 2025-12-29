@@ -1,5 +1,7 @@
+json
 {
   "version": 2,
+  "regions": ["hkg1"],  // 香港单区域最优
   "builds": [
     {
       "src": "public/index.html",
