@@ -1,5 +1,6 @@
+
 {
-  "version": 2,
+  "version": 3,
   "regions": ["hkg1"],
   "builds": [
     {
@@ -12,7 +13,9 @@
       "src": "/(.*)",
       "dest": "/public/index.html",
       "headers": {
-        "Cache-Control": "public, max-age=0, must-revalidate"
+        "Cache-Control": "public, max-age=3600",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff"
       }
     }
   ]
