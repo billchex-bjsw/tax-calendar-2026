@@ -1,7 +1,5 @@
-
 {
   "version": 2,
-  "regions": ["hkg1"]  
   "builds": [
     {
       "src": "public/index.html",
@@ -13,5 +11,6 @@
       "src": "/(.*)",
       "dest": "/public/index.html"
     }
-  ]
+  ],
+  "regions": ["hkg1"] 
 }
