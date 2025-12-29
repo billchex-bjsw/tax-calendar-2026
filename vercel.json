@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "regions": ["hkg1"],
   "builds": [
     {
       "src": "public/index.html",
@@ -9,8 +10,10 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/public/index.html"
+      "dest": "/public/index.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
     }
-  ],
-  "regions": ["hkg1"] 
+  ]
 }
