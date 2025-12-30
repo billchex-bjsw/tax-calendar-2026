@@ -9,7 +9,7 @@
 - 数据本地存储
 
 ## 使用
-直接访问：https://Bjaxyw.CN.eu.org
+直接访问：https://www.Bjaxyw.CN.eu.org
 
 ## 技术
 纯 HTML + CSS + JavaScript，无需后端
